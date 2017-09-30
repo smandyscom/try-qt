@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTableWidget>
+#include <QLayout>
+#include <mywidget.h>
 
 //apt-cache rdepends packagename
 // check if somebody had done this , depends on libmodbus
@@ -34,6 +37,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QTableWidget* tableWidget;
+    QVBoxLayout* vboxLayout;
+    QVBoxLayout* vboxLayout2;
 };
 
 
