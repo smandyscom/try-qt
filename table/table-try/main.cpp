@@ -3,6 +3,9 @@
 
 int main(int argc, char *argv[])
 {
+    //ENABLE virtual keyboard module
+    qputenv("QT_IM_MODULE", QByteArray("qtvirtualkeyboard"));
+
     data_cell dc;
 
     dc.title = "TITLE";
