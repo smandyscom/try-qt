@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     this->textBrowser =  this->findChild<QTextBrowser*>("textBrowser");
+    ui->statusBar->showMessage(tr("I'm status message"),5000); // will vanished in 5 seconds
 }
 
 MainWindow::~MainWindow()
