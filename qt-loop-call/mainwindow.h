@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <QStateMachine>
+#include <QModbusServer>
+
 namespace Ui {
 class MainWindow;
 }
@@ -26,10 +28,13 @@ private:
     int stateFunction();
 
     QStateMachine* fsm;
+    QModbusServer* modbusdevice;
 
     public slots:
 
     int showMessage();
+
+    int modbusSlaveInit();//initializing procedure of modbus slave
 };
 
 #endif // MAINWINDOW_H

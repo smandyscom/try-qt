@@ -33,7 +33,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-MainWindow::stateFunction()
+int MainWindow::stateFunction()
 {
     ui->statusBar->showMessage(tr("current state:%1").arg(state));
     state+=1;
@@ -42,7 +42,12 @@ MainWindow::stateFunction()
     return 0;
 }
 
-MainWindow::showMessage()
+int MainWindow::showMessage()
 {
     ui->statusBar->showMessage(tr("current state%1").arg(sender()->objectName()));
+}
+
+int MainWindow::modbusSlaveInit()
+{
+
 }
