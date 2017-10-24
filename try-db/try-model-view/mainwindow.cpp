@@ -5,6 +5,8 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlRelationalTableModel>
+#include <QSqlTableModel>
+
 #include <QStringListModel>
 #include "customdelegate.h"
 MainWindow::MainWindow(QWidget *parent) :
@@ -16,6 +18,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QStringList qsl;
     qsl << "First" << "Second" << "Third" << "4" << "5";
      model = new QStringListModel(qsl);
+
+     //0. open connection
+     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE"); // driver selection
+     db.setHostName("../");
+     bool isOk = db.open();
+     //sql table
+     model = new QSqlTableModel(this);
+     QSqlTableModel* sq = static_cast<QSqlTableModel*>(model);
 
 
     //ui->statusBar->showMessage(variant.toString());
