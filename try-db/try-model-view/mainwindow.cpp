@@ -17,23 +17,33 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QStringList qsl;
     qsl << "First" << "Second" << "Third" << "4" << "5";
-     model = new QStringListModel(qsl);
+     model1 = new QStringListModel(qsl);
 
      //0. open connection
-     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE"); // driver selection
-     db.setHostName("../");
-     bool isOk = db.open();
      //sql table
-     model = new QSqlTableModel(this);
-     QSqlTableModel* sq = static_cast<QSqlTableModel*>(model);
+     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+     db.setDatabaseName("/Users/Apple/Github/try-qt/try-db/motion_paramters.db"); // set path only , no server served
+     bool isOK = db.open();
 
+     QSqlQuery qe;
+     bool res = qe.exec("SELECT * FROM AXIS_POOL");
+     qe.next();
+     QVariant vv = qe.value(0);
+     QString v = qe.lastError().text(); // done
 
+   QAbstractItemModel*  model2 = new QSqlRelationalTableModel(this);
+     QSqlRelationalTableModel* sq = static_cast<QSqlRelationalTableModel*>(model2);
+    QSqlDatabase db2 = sq->database();
+     sq->setTable("AXIS_POOL");
+     //sq->setHeaderData(0, Qt::Horizontal, QObject::tr("AXIS_ID"));
+     //sq->setHeaderData(1, Qt::Horizontal, QObject::tr("NAME"));
+    isOK= sq->select();
     //ui->statusBar->showMessage(variant.toString());
     //ui->statusBar->showMessage(model->data(index,Qt::DisplayRole).toString());
 
-    connect(model,SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),this,SLOT(refresh_status_bar())); //raise event when data in model changed
+    connect(model1,SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),this,SLOT(refresh_status_bar())); //raise event when data in model changed
 
-    ui->tableView->setModel(model);
+    ui->tableView->setModel(model2);
 
     ui->tableView->setItemDelegate(new customdelegate(this));
     //ui->tableView->selectionModel()->select(null, QItemSelectionModel::Current);
@@ -50,9 +60,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::refresh_status_bar()
 {
-    QModelIndex index = model->index(0,0);
+    QModelIndex index = model1->index(0,0);
     QVariant variant;
-    variant = model->data(index,Qt::DisplayRole);//assignment
+    variant = model1->data(index,Qt::DisplayRole);//assignment
 
     ui->statusBar->showMessage(variant.toString());
 }
@@ -67,7 +77,7 @@ void MainWindow::selectionChanged_handler(QItemSelection newone, QItemSelection 
     QVariant __var;
     //show up which one selected
     if (newone.indexes().count()!=0)
-        __var = model->data(newone.indexes().first(),Qt::DisplayRole);
+        __var = model1->data(newone.indexes().first(),Qt::DisplayRole);
 
     ui->statusBar->showMessage(tr("%1 items selected, 1st is %2").arg(QString::number(newone.indexes().count()),__var.toString()));
 }

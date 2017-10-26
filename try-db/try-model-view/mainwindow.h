@@ -26,7 +26,7 @@ private slots:
     void currentChanged_handler(QModelIndex newone,QModelIndex oldone);
 private:
     Ui::MainWindow *ui;
-    QAbstractItemModel* model;
+    QAbstractItemModel* model1;
 
 };
 
