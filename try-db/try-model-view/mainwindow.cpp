@@ -31,26 +31,25 @@ MainWindow::MainWindow(QWidget *parent) :
      QVariant vv = qe.value(0);
      QString v = qe.lastError().text(); // done
 
-   QAbstractItemModel*  model2 = new QSqlRelationalTableModel(this);
+   model2 = new QSqlRelationalTableModel(this);
      QSqlRelationalTableModel* sq = static_cast<QSqlRelationalTableModel*>(model2);
     QSqlDatabase db2 = sq->database();
-     sq->setTable("AXIS_POOL");
-     //sq->setHeaderData(0, Qt::Horizontal, QObject::tr("AXIS_ID"));
-     //sq->setHeaderData(1, Qt::Horizontal, QObject::tr("NAME"));
-    isOK= sq->select();
-    //ui->statusBar->showMessage(variant.toString());
-    //ui->statusBar->showMessage(model->data(index,Qt::DisplayRole).toString());
+    sq->setEditStrategy(QSqlRelationalTableModel::OnManualSubmit);
+     //sq->setTable("AXIS_POOL");
 
-    connect(model1,SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),this,SLOT(refresh_status_bar())); //raise event when data in model changed
+    sq->setTable("PRESET_POSITION_ALL_2");
+    isOK= sq->select();
+
+    connect(model2,SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),this,SLOT(refresh_status_bar())); //raise event when data in model changed
 
     ui->tableView->setModel(model2);
 
-    ui->tableView->setItemDelegate(new customdelegate(this));
+    //ui->tableView->setItemDelegate(new customdelegate(this));
     //ui->tableView->selectionModel()->select(null, QItemSelectionModel::Current);
     QItemSelectionModel* ism = ui->tableView->selectionModel();
 
-    connect(ism,SIGNAL(selectionChanged(QItemSelection,QItemSelection)),this,SLOT(selectionChanged_handler(QItemSelection,QItemSelection))); // selection practice
-    connect(ism,SIGNAL(currentChanged(QModelIndex,QModelIndex)),this,SLOT(currentChanged_handler(QModelIndex,QModelIndex))); //current selection practice
+    //connect(ism,SIGNAL(selectionChanged(QItemSelection,QItemSelection)),this,SLOT(selectionChanged_handler(QItemSelection,QItemSelection))); // selection practice
+    //connect(ism,SIGNAL(currentChanged(QModelIndex,QModelIndex)),this,SLOT(currentChanged_handler(QModelIndex,QModelIndex))); //current selection practice
 }
 
 MainWindow::~MainWindow()
@@ -64,7 +63,7 @@ void MainWindow::refresh_status_bar()
     QVariant variant;
     variant = model1->data(index,Qt::DisplayRole);//assignment
 
-    ui->statusBar->showMessage(variant.toString());
+    ui->statusBar->showMessage(tr("changed,%1").arg(variant.toString()));
 }
 
 void MainWindow::on_tableView_activated(const QModelIndex &index)
@@ -87,4 +86,13 @@ void MainWindow::currentChanged_handler(QModelIndex newone, QModelIndex oldone)
     //show up which one selected
     QVariant __var = newone.model()->data(newone,Qt::DisplayRole);
     ui->textBrowser->setText(tr("%1 current selected").arg(__var.toString()));
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    //submit changes
+    bool isOK = model2->database().transaction();
+    isOK = model2->submitAll();
+    ui->statusBar->showMessage(model2->lastError().text());
+    isOK = model2->database().commit();
 }

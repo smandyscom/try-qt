@@ -8,6 +8,9 @@
 
 #include <QStyledItemDelegate>
 #include <QWidget>
+#include <QSqlRelationalTableModel>
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -24,10 +27,12 @@ private slots:
     void refresh_status_bar();
     void selectionChanged_handler(QItemSelection newone,QItemSelection oldone);
     void currentChanged_handler(QModelIndex newone,QModelIndex oldone);
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QAbstractItemModel* model1;
-
+    QSqlRelationalTableModel* model2;
 };
 
 
