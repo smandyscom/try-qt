@@ -1,0 +1,25 @@
+CREATE TEMP VIEW IF NOT EXISTS V24 AS
+    SELECT B.NAME,
+           A.IS_ABS,
+           A.COORD,
+           A.SPEED,
+           A.ACC_TIME,
+           A.DEC_TIME,
+           A.TORQUE_LIMIT,
+           B.COMMENT
+      FROM PRESET_POSITION_SINGLE A
+           LEFT JOIN
+           PRESET_POSITION_ATTR B ON A.BANK_ID = B.BANK_ID
+           LEFT JOIN
+           PRESET_POSITION_TAGS C ON A.BANK_ID = C.BANK_ID;
+
+CREATE TRIGGER IF NOT EXISTS T23
+                  INSTEAD OF UPDATE OF COORD
+                          ON V24
+                    FOR EACH ROW
+BEGIN
+    UPDATE PRESET_POSITION_SINGLE
+       SET COORD = NEW.COORD,
+           SPEED = NEW.SPEED
+     WHERE BANK_ID = NEW.BANK_ID;
+END;
